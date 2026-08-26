@@ -1,0 +1,19 @@
+<div class="confirm-dialog">
+    <p class="confirm-dialog__title">
+        {{ title }}
+    </p>
+
+    <p class="confirm-dialog__hint">
+        {{ message }}
+    </p>
+
+    <div class="confirm-dialog__actions">
+        <button tuiButton appearance="secondary" type="button" (click)="cancel.emit()">
+            {{ cancelLabel }}
+        </button>
+
+        <button tuiButton type="button" (click)="onConfirm()">
+            {{ confirmLabel }}
+        </button>
+    </div>
+</div>

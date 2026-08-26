@@ -1,0 +1,64 @@
+<div class="shell">
+  <app-ph-menu [items]="sidebar" [collapsed]="sidebarCollapsed" (collapsedChange)="sidebarCollapsed = $event" />
+
+  <!-- ===== Main ===== -->
+  <div class="main">
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="topbar__brand">
+        <tui-icon icon="@tui.credit-card" class="topbar__brand-icon" />
+        <span class="topbar__brand-text">PAYMENT <b>HUB</b></span>
+      </div>
+
+      <div class="topbar__actions">
+        <button type="button" class="topbar__icon-btn">
+          <tui-icon icon="@tui.bell" />
+          <span class="topbar__badge">64</span>
+        </button>
+
+        <button type="button" class="topbar__lang">
+          VIE
+          <tui-icon icon="@tui.chevron-down" />
+        </button>
+
+        <button type="button" class="topbar__user" [tuiDropdown]="userMenu" [(tuiDropdownOpen)]="userMenuOpen">
+          <div tuiAvatar="HT" size="s" appearance="primary"></div>
+          <div class="topbar__user-info">
+            <span class="topbar__user-name">Hoàng Văn Thuận</span>
+            <span class="topbar__user-role">Chuyên viên</span>
+          </div>
+          <tui-icon icon="@tui.chevron-down" class="topbar__user-chevron" />
+        </button>
+
+        <ng-template #userMenu>
+          <tui-data-list class="user-menu">
+            <div class="user-menu__header">
+              <div tuiAvatar="HT" size="m" appearance="primary"></div>
+              <div class="topbar__user-info">
+                <span class="topbar__user-name">Hoàng Văn Thuận</span>
+                <span class="topbar__user-role">Chuyên viên</span>
+              </div>
+            </div>
+
+            <div class="user-menu__divider"></div>
+
+            <button tuiOption type="button" class="user-menu__logout" (click)="logout()">
+              <tui-icon icon="@tui.log-out" />
+              Đăng xuất
+            </button>
+          </tui-data-list>
+        </ng-template>
+      </div>
+    </header>
+
+    <div class="content">
+      <app-ph-submenu [items]="submenu" [active]="activeSubmenu" (activeChange)="activeSubmenu = $event"
+        [collapsed]="submenuCollapsed" (collapsedChange)="submenuCollapsed = $event" />
+
+      <!-- Page body: content swaps here based on the active route -->
+      <main class="page">
+        <router-outlet />
+      </main>
+    </div>
+  </div>
+</div>

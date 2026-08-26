@@ -1,0 +1,102 @@
+:host {
+  display: block;
+}
+
+.form-page {
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    gap: 1rem;
+  }
+
+  &__back {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    color: inherit;
+
+    tui-icon {
+      font-size: 1.1rem;
+      color: var(--tui-text-secondary);
+    }
+
+    h1 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    &:hover tui-icon {
+      color: var(--tui-text-primary);
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-shrink: 0;
+  }
+}
+
+.card {
+  background: var(--tui-background-base);
+  border-radius: var(--tui-radius-l);
+  box-shadow: var(--tui-shadow-small);
+  padding: 1.5rem;
+}
+
+.form-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+
+    &_dates {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+
+      tui-textfield {
+        grid-column: span 1;
+      }
+    }
+  }
+
+  &__desc {
+    width: 100%;
+  }
+}
+
+@media (max-width: 900px) {
+  .form-card__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Make sure every form field renders as a clearly rounded, bordered box */
+tui-textfield {
+  border: 1px solid var(--tui-border-normal);
+  border-radius: var(--tui-radius-m);
+  background: var(--tui-background-base);
+
+  &[data-disabled='true'],
+  &:has(input:disabled) {
+    background: var(--tui-background-neutral-1);
+    cursor: not-allowed;
+  }
+}
+
+.form-card__lock-icon {
+  font-size: 0.85rem;
+  margin-inline-start: 0.25rem;
+  color: var(--tui-text-secondary);
+  vertical-align: middle;
+}

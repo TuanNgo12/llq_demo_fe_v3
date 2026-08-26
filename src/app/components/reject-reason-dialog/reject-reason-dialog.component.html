@@ -1,0 +1,19 @@
+<div class="reject-dialog">
+  <tui-textfield>
+    <label tuiLabel>Lý do từ chối *</label>
+    <textarea tuiTextarea [(ngModel)]="reason" placeholder="Nhập lý do từ chối phê duyệt" rows="4"></textarea>
+  </tui-textfield>
+
+  @if (touched && !isValid) {
+  <p class="reject-dialog__error">Vui lòng nhập lý do từ chối.</p>
+  }
+
+  <div class="reject-dialog__actions">
+    <button tuiButton type="button" appearance="secondary" size="m" (click)="cancel.emit()">
+      Hủy
+    </button>
+    <button tuiButton type="button" appearance="negative" size="m" (click)="onConfirm()">
+      Xác nhận
+    </button>
+  </div>
+</div>

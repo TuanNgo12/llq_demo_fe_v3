@@ -1,0 +1,98 @@
+:host {
+  display: block;
+}
+
+.card {
+  background: var(--tui-background-base);
+  border-radius: var(--tui-radius-l);
+  box-shadow: var(--tui-shadow-small);
+}
+
+.table-card {
+  padding: 0;
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.25rem;
+    border-top: 1px solid var(--tui-border-normal);
+  }
+
+  &__footer-text {
+    font-size: 12px;
+    color: var(--tui-text-secondary);
+  }
+}
+
+.table-wrapper {
+  border-top: 1px solid var(--tui-border-normal);
+
+  /* Row click opens the detail dialog, so the pointer cursor should say so —
+     the auto-injected checkbox/actions cells opt back out below. */
+  ag-grid-angular {
+    display: block;
+    cursor: pointer;
+
+    ::ng-deep [col-id='ag-Grid-SelectionColumn'],
+    ::ng-deep [col-id='actions'] {
+      cursor: default;
+    }
+
+    ::ng-deep .ag-grid-empty-hint {
+      color: var(--tui-text-secondary);
+      font-size: 12.5px;
+    }
+  }
+}
+
+.bulk-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.65rem 1.25rem;
+  background: rgba(17, 112, 111, 0.08);
+  border-top: 1px solid var(--tui-border-normal);
+  font-size: 12.5px;
+
+  &__count {
+    font-weight: 600;
+    color: var(--tui-background-accent-1);
+    flex-shrink: 0;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-inline-start: auto;
+  }
+
+  &__warning {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--tui-status-warning);
+    font-weight: 500;
+  }
+
+  &__hint {
+    color: var(--tui-text-secondary);
+  }
+}

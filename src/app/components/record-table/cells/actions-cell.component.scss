@@ -1,0 +1,57 @@
+:host {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.row-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: none;
+    border-radius: var(--tui-radius-s);
+    background: transparent;
+    color: var(--tui-text-secondary);
+    cursor: pointer;
+    transition: all .2s;
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    &_edit {
+      color: #07752f;
+
+      &:hover {
+        background: #dbeafe;
+        color: #07752f;
+      }
+    }
+
+    &_copy {
+      color: #f59e0b;
+
+      &:hover {
+        background: #fef3c7;
+        color: #d97706;
+      }
+    }
+
+    &_delete {
+      color: #ef4444;
+
+      &:hover {
+        background: #fee2e2;
+        color: #dc2626;
+      }
+    }
+  }
+}

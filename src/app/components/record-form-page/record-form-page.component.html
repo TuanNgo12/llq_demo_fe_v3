@@ -1,0 +1,24 @@
+<div class="breadcrumb">
+  <span>Trang chủ</span>
+  <tui-icon icon="@tui.chevron-right" class="breadcrumb__sep" />
+  <a routerLink="/" class="breadcrumb__link">Tham số danh mục theo nhóm</a>
+  <tui-icon icon="@tui.chevron-right" class="breadcrumb__sep" />
+  <span class="breadcrumb__current">{{ breadcrumbLabel }}</span>
+</div>
+
+@if (resolvingEdit) {
+<div class="state-banner">
+  <tui-icon icon="@tui.loader-circle" class="state-banner__icon state-banner__icon_spin" />
+  Đang tải dữ liệu bản ghi...
+</div>
+} @else if (editRecordNotFound) {
+<div class="state-banner state-banner_error">
+  <tui-icon icon="@tui.circle-alert" class="state-banner__icon" />
+  <span>Không tìm thấy bản ghi cần sửa.</span>
+  <a routerLink="/" tuiButton appearance="secondary" size="s">Về danh sách</a>
+</div>
+} @else {
+<app-ph-record-form [componentCodeOptions]="componentCodeOptions" [heading]="heading" [initialValue]="initialValue"
+  [lockParamType]="lockParamType" (cancel)="onCancel()" (save)="onSave($event)"
+  (saveAndSubmit)="onSaveAndSubmit($event)" />
+}

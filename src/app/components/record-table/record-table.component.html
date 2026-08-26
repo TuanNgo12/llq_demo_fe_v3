@@ -1,0 +1,55 @@
+<section class="card table-card">
+  <div class="table-card__header">
+    <div class="table-card__title">
+      Danh sách bản ghi
+      <span tuiBadge appearance="neutral" size="s">{{ totalCount }}</span>
+    </div>
+    <button tuiButton type="button" appearance="secondary" size="m" iconStart="@tui.download" [style.color]="'black'"
+      (click)="exportClick.emit()">
+      Xuất Excel
+    </button>
+  </div>
+
+  @if (selectedRows.length > 0) {
+  <div class="bulk-bar">
+    <span class="bulk-bar__count">Đã chọn {{ selectedRows.length }} bản ghi</span>
+    <div class="bulk-bar__actions">
+      @if (!isSelectionHomogeneous) {
+      <span class="bulk-bar__warning">
+        <tui-icon icon="@tui.alert-triangle" />
+        Các bản ghi đã chọn phải cùng trạng thái để phê duyệt cùng nhau
+      </span>
+      } @else {
+      @switch (commonSelectedStatus) {
+      @case (GROUP_CATEGORY_STATUS.PENDING) {
+      <button tuiButton type="button" size="s" (click)="emitBulkApprove()">
+        Phê duyệt ({{ selectedRows.length }})
+      </button>
+      }
+      @case (GROUP_CATEGORY_STATUS.APPROVED) {
+      <button tuiButton type="button" size="s" (click)="emitBulkCancel()">
+        Hủy duyệt ({{ selectedRows.length }})
+      </button>
+      }
+      @default {
+      <span class="bulk-bar__hint">Bản ghi ở trạng thái này không có thao tác phê duyệt.</span>
+      }
+      }
+      }
+    </div>
+  </div>
+  }
+
+  <div class="table-wrapper">
+    <ag-grid-angular [theme]="theme" [rowData]="rows" [columnDefs]="colDefs" [defaultColDef]="defaultColDef"
+      [selectionColumnDef]="selectionColumnDef" [rowSelection]="rowSelection" [getRowId]="getRowId"
+      [overlayNoRowsTemplate]="noRowsTemplate" domLayout="autoHeight" [suppressCellFocus]="true"
+      (gridReady)="onGridReady($event)" (selectionChanged)="onSelectionChanged($event)"
+      (cellClicked)="onCellClicked($event)" />
+  </div>
+
+  <div class="table-card__footer">
+    <span class="table-card__footer-text">Trang {{ pageIndex + 1 }} / {{ pageCount }}</span>
+    <tui-pagination [length]="pageCount" [index]="pageIndex" (indexChange)="pageIndexChange.emit($event)" />
+  </div>
+</section>

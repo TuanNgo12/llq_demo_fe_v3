@@ -1,0 +1,89 @@
+<div class="form-page">
+  <div class="form-page__header">
+    <button type="button" class="form-page__back" (click)="cancel.emit()">
+      <tui-icon icon="@tui.chevron-left" />
+      <h1 tuiTitle>{{ heading }}</h1>
+    </button>
+
+    <div class="form-page__actions">
+      <button tuiButton type="button" appearance="secondary" size="m" iconStart="@tui.x" [style.color]="'black'"
+        (click)="cancel.emit()">
+      </button>
+      <button tuiButton type="button" appearance="secondary" size="m" iconStart="@tui.save" (click)="onSave()">
+        Lưu
+      </button>
+      <button tuiButton type="button" size="m" iconStart="@tui.send" (click)="onSaveAndSubmit()">
+        Lưu và gửi duyệt
+      </button>
+    </div>
+  </div>
+
+  <form class="card form-card" [formGroup]="form">
+    <div class="form-card__grid">
+      <div>
+        <label tuiLabel>
+          Danh mục theo nhóm <span tuiLabel style="color: red;">*</span>
+          @if (lockParamType) {
+          }
+        </label>
+        <tui-textfield>
+          <input tuiInput formControlName="paramType" placeholder="Nhập nội dung" />
+          <tui-error formControlName="paramType" [order]="['required', 'duplicate']" />
+        </tui-textfield>
+      </div>
+      <div>
+        <label tuiLabel>Giá trị thành phần <span tuiLabel style="color: red;">*</span></label>
+        <tui-textfield>
+          <input tuiInput formControlName="paramValue" placeholder="Nhập nội dung" />
+          <tui-error formControlName="paramValue" [order]="['required', 'duplicate']" />
+        </tui-textfield>
+      </div>
+
+      <div>
+        <label tuiLabel>Tên thành phần <span tuiLabel style="color: red;">*</span></label>
+        <tui-textfield>
+          <input tuiInput formControlName="paramName" placeholder="Nhập nội dung" />
+          <tui-error formControlName="paramName" [order]="['required']" />
+        </tui-textfield>
+      </div>
+
+      <div>
+        <label tuiLabel>Cấu phần xử lý <span tuiLabel style="color: red;">*</span></label>
+        <tui-textfield multi tuiChevron>
+          <select tuiMultiSelect [items]="[componentCodeOptions]" placeholder="Chọn giá trị"
+            formControlName="componentCode"></select>
+          <tui-error formControlName="componentCode" [order]="['required']" />
+        </tui-textfield>
+      </div>
+    </div>
+
+    <div class="form-card__grid form-card__grid_dates">
+      <div class="wrapper tui-space_top-3" [tuiDateFormat]="{mode: 'dd/mm/yyyy'}">
+        <label tuiLabel>Ngày hiệu lực <span tuiLabel style="color: red;">*</span></label>
+        <tui-textfield>
+          <input tuiInputDateTime formControlName="effectiveDate" [tuiDateFormat]="{separator: '/'}"
+            placeholder="dd/mm/yyyy HH:mm" />
+          <tui-calendar *tuiDropdown />
+          <tui-error formControlName="effectiveDate" [order]="['required', 'duplicate']" />
+        </tui-textfield>
+      </div>
+
+      <div class="wrapper tui-space_top-3" [tuiDateFormat]="{mode: 'dd/mm/yyyy'}">
+        <label tuiLabel>Ngày hết hiệu lực</label>
+        <tui-textfield>
+          <input tuiInputDateTime formControlName="endEffectiveDate" [tuiDateFormat]="{separator: '/'}"
+            placeholder="dd/mm/yyyy HH:mm" />
+          <tui-calendar *tuiDropdown />
+          <tui-error formControlName="endEffectiveDate" [order]="['required', 'duplicate']" />
+        </tui-textfield>
+      </div>
+    </div>
+
+    <div>
+      <label tuiLabel>Mô tả</label>
+      <tui-textfield class="form-card__desc">
+        <input tuiInput formControlName="description" placeholder="Nhập nội dung" />
+      </tui-textfield>
+    </div>
+  </form>
+</div>

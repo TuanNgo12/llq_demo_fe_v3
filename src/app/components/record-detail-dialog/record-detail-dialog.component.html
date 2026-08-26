@@ -1,0 +1,99 @@
+<div class="detail">
+  <div class="detail__header">
+    <div class="detail__title">
+      Xem chi tiết
+      <span tuiBadge size="m" class="status-badge" [style.background-color]="statusConfig.background"
+        [style.color]="statusConfig.color">
+        <span class="status-icon" [style.background-color]="
+          record.status === GROUP_CATEGORY_STATUS.NEW
+            ? 'transparent'
+            : statusConfig.color
+        " [style.color]="
+          record.status === GROUP_CATEGORY_STATUS.NEW
+            ? statusConfig.color
+            : '#ffffff'
+        ">
+        </span>
+        {{ record.status }} - {{ statusLabel }}
+      </span>
+    </div>
+  </div>
+
+  <div class="detail__grid">
+    <div class="detail__col">
+      <div class="detail__col-header">
+        <tui-icon icon="@tui.info" class="icon-cu" />
+        Dữ liệu cũ
+      </div>
+
+      @for (f of fields; track f.key) {
+      <div class="detail__field">
+        <span class="detail__label">{{ f.label }}</span>
+        <!-- @if (hasOldData) { -->
+        <!-- <span class="detail__value">{{ oldValue(f.key) }}</span> -->
+        <!-- }  -->
+        <span class="detail__value">
+          {{ hasOldData ? oldValue(f.key) : ' ' }}
+        </span>
+      </div>
+      }
+    </div>
+
+    <div class="detail__col">
+      <div class="detail__col-header">
+        <tui-icon icon="@tui.info" class="icon-moi" />
+        Dữ liệu mới
+      </div>
+
+      @for (f of fields; track f.key) {
+      <div class="detail__field">
+        <span class="detail__label">{{ f.label }}</span>
+        <span class="detail__value" [class.detail__value_changed]="isChanged(f.key)">{{ newValue(f.key) }}</span>
+      </div>
+      }
+    </div>
+  </div>
+
+  <div class="detail__footer">
+    @switch (record.status) {
+    @case (GROUP_CATEGORY_STATUS.NEW) {
+    @if (canDelete) {
+    <button tuiButton type="button" appearance="secondary" size="m" (click)="deleteRecord.emit(record)">
+      Xóa
+    </button>
+    }
+    <button tuiButton type="button" size="m" (click)="submitForApproval.emit(record.id)">
+      Gửi duyệt
+    </button>
+    }
+    @case (GROUP_CATEGORY_STATUS.PENDING) {
+    <button tuiButton type="button" appearance="secondary" size="m" (click)="reject.emit(record)">
+      Từ chối
+    </button>
+    <button tuiButton type="button" size="m" (click)="approve.emit(record.id)">
+      Phê duyệt
+    </button>
+    }
+    @case (GROUP_CATEGORY_STATUS.REJECTED) {
+    @if (canDelete) {
+    <button tuiButton type="button" appearance="secondary" size="m" (click)="deleteRecord.emit(record)">
+      Xóa
+    </button>
+    }
+    <button tuiButton type="button" size="m" (click)="submitForApproval.emit(record.id)">
+      Gửi duyệt
+    </button>
+    }
+    @case (GROUP_CATEGORY_STATUS.CANCELLED) {
+    <button tuiButton type="button" size="m" (click)="submitForApproval.emit(record.id)">
+      Gửi duyệt
+    </button>
+    }
+    @default {
+    <button tuiButton type="button" appearance="secondary" size="m" (click)="cancel.emit(record)">
+      Hủy phê duyệt
+    </button>
+    }
+    }
+  </div>
+</div>

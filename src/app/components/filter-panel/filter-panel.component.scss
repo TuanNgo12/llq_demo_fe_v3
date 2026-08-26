@@ -1,0 +1,45 @@
+:host {
+  display: block;
+  margin-bottom: 1.25rem;
+}
+
+.card {
+  background: var(--tui-background-base);
+  border-radius: var(--tui-radius-l);
+  box-shadow: var(--tui-shadow-small);
+  padding: 1.25rem;
+}
+
+.filters {
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  &__row2 {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  &__status {
+    grid-column: span 1;
+  }
+
+  &__actions {
+    grid-column: span 3;
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+  }
+}
+
+tui-textfield {
+  border: 1px solid var(--tui-border-normal);
+  border-radius: var(--tui-radius-m);
+  background: var(--tui-background-base);
+}

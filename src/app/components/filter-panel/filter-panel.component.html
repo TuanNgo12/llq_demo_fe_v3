@@ -1,0 +1,53 @@
+<section class="card filters">
+  <div class="filters__grid">
+    <div>
+      <label tuiLabel>Danh mục theo nhóm</label>
+      <tui-textfield>
+        <input tuiInput [(ngModel)]="filters.paramType" placeholder="Nhập nội dung" />
+      </tui-textfield>
+    </div>
+
+    <div>
+      <label tuiLabel>Giá trị thành phần</label>
+      <tui-textfield>
+        <input tuiInput [(ngModel)]="filters.paramValue" placeholder="Nhập nội dung" />
+      </tui-textfield>
+    </div>
+
+    <div>
+      <label tuiLabel>Tên thành phần</label>
+      <tui-textfield>
+        <input tuiInput [(ngModel)]="filters.paramName" placeholder="Nhập nội dung" />
+      </tui-textfield>
+    </div>
+
+    <div>
+      <label tuiLabel>Trạng thái tham số</label>
+      <tui-textfield tuiChevron>
+        <input tuiSelect [(ngModel)]="filters.status" placeholder="Nhập nội dung" />
+        <tui-data-list-wrapper *tuiDropdown [items]="recordStatuses" />
+      </tui-textfield>
+    </div>
+    <!-- <pre>{{ filters | json }}</pre> -->
+  </div>
+
+  <div class="filters__row2">
+    <div>
+      <label tuiLabel>Trạng thái hoạt động</label>
+      <tui-textfield tuiChevron class="filters__status">
+        <input tuiSelect [(ngModel)]="filters.isActive" placeholder="Nhập nội dung" />
+        <tui-data-list-wrapper *tuiDropdown [items]="activeStatuses" />
+      </tui-textfield>
+    </div>
+
+    <div class="filters__actions">
+      <button tuiButton type="button" appearance="secondary" size="m" iconStart="@tui.rotate-ccw"
+        [style.color]="'black'" (click)="onReset()">
+        Xóa bộ lọc
+      </button>
+      <button tuiButton type="button" size="m" iconStart="@tui.search" (click)="onSearch()">
+        Tìm kiếm
+      </button>
+    </div>
+  </div>
+</section>

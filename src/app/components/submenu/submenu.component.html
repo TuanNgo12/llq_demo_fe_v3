@@ -1,0 +1,22 @@
+@if (!collapsed) {
+  <nav class="submenu">
+    <button type="button" class="submenu__collapse-btn" (click)="toggle()">
+      <tui-icon icon="@tui.chevrons-left" />
+    </button>
+
+    @for (item of items; track item) {
+      <button
+        type="button"
+        class="submenu__item"
+        [class.submenu__item_active]="item === active"
+        (click)="select(item)"
+      >
+        {{ item }}
+      </button>
+    }
+  </nav>
+} @else {
+  <button type="button" class="submenu__expand-btn" (click)="toggle()" title="Mở rộng menu">
+    <tui-icon icon="@tui.chevrons-right" />
+  </button>
+}

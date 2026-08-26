@@ -1,0 +1,24 @@
+<div class="delete-dialog">
+  <div class="delete-dialog__title">
+    <tui-icon icon="@tui.triangle-alert" class="delete-dialog__icon" />
+    Xóa bản ghi
+  </div>
+
+  <p class="delete-dialog__hint">
+    Bạn có chắc chắn muốn xóa
+    @if (recordLabel) {
+    <b>"{{ recordLabel }}"</b>
+    } @else {
+    bản ghi này
+    }? Hành động này không thể hoàn tác.
+  </p>
+
+  <div class="delete-dialog__actions">
+    <button tuiButton type="button" appearance="secondary" size="m" (click)="cancel.emit()">
+      Hủy
+    </button>
+    <button tuiButton type="button" appearance="negative" size="m" (click)="onConfirm()">
+      Xác nhận xóa
+    </button>
+  </div>
+</div>

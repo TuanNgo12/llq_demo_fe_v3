@@ -1,0 +1,83 @@
+:host {
+  display: block;
+  flex-shrink: 0;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 60px;
+  height: 100vh;
+  flex-shrink: 0;
+  background: #11706f;
+  padding: 1rem 0;
+  gap: 0.25rem;
+  overflow-y: auto;
+  transition: width 0.15s ease;
+  font-size: 13px;
+
+  &_collapsed {
+    width: 56px;
+  }
+
+  &__logo {
+    color: #fff;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    width: 100%;
+    padding: 0.5rem 0.25rem;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.55);
+    cursor: pointer;
+    font-size: 10px;
+    line-height: 1.2;
+    text-align: center;
+
+    tui-icon {
+      font-size: 1.15rem;
+    }
+
+    span {
+      max-width: 60px;
+    }
+
+    &:hover {
+      color: #fff;
+      background: #011512;
+    }
+
+    &_active {
+      color: #fff;
+      position: relative;
+      background: #011512;
+
+      &::before {
+        content: '';
+        position: absolute;
+        inset-inline-start: 0;
+        inset-block: 0.4rem;
+        width: 3px;
+        border-radius: 2px;
+      }
+    }
+
+    &_bottom {
+      margin-top: auto;
+    }
+  }
+
+  &__toggle {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 0.6rem;
+    margin-top: 0.5rem;
+  }
+}

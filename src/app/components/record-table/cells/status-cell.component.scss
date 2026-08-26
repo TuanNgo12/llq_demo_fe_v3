@@ -1,0 +1,37 @@
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 500;
+
+  &__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  &_active {
+    color: var(--tui-text-positive);
+
+    .status__dot {
+      background: var(--tui-status-positive);
+    }
+  }
+
+  &_new {
+    color: var(--tui-text-secondary);
+
+    .status__dot {
+      background: var(--tui-text-tertiary, #114bae);
+    }
+  }
+
+  &_pending {
+    color: var(--tui-status-warning);
+
+    .status__dot {
+      background: var(--tui-status-warning);
+    }
+  }
+}

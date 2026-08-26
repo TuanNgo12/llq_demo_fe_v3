@@ -1,0 +1,52 @@
+<div class="breadcrumb">
+  <span>Trang chủ</span>
+  <tui-icon icon="@tui.chevron-right" class="breadcrumb__sep" />
+  <span class="breadcrumb__current">Tham số danh mục theo nhóm</span>
+</div>
+
+<div class="page__header">
+  <h1 tuiTitle>Tham số danh mục theo nhóm</h1>
+  <button tuiButton type="button" size="m" iconStart="@tui.plus" routerLink="/new">
+    Thêm mới
+  </button>
+</div>
+
+<!-- Filters -->
+<app-ph-filter-panel [filters]="filters" [recordStatuses]="recordStatuses" [activeStatuses]="activeStatuses"
+  (search)="onSearch($event)" (reset)="onResetFilters()" />
+
+<!-- Table -->
+<app-ph-record-table [rows]="rows" [totalCount]="totalCount" [pageIndex]="pageIndex" [pageCount]="pageCount"
+  (pageIndexChange)="onPageChange($event)" (exportClick)="exportExcel(filters)" (rowClick)="openDetailDialog($event)"
+  (bulkSubmit)="onBulkSubmit($event)" (bulkCancel)="onBulkCancel($event)" (bulkReject)="onBulkReject($event)"
+  (editRow)="onEditRow($event)" (copyRow)="onCopyRow($event)" (deleteRow)="onDeleteRow($event)" />
+
+<!-- ===== Record detail / approval dialog ===== -->
+<ng-template #detailDialog let-observer>
+  @if (selectedRecord) {
+  <app-ph-record-detail-dialog [record]="selectedRecord" (close)="observer.complete()"
+    (deleteRecord)="onDeleteRecord($event, observer)" (submitForApproval)="onSubmitDetailForApproval($event, observer)"
+    (approve)="onApproveDetail($event, observer)" (reject)="onRejectDetail($event, observer)"
+    (cancel)="onCancelDetail($event, observer)" />
+  }
+</ng-template>
+
+<!-- ===== Confirm dialog (single or bulk) ===== -->
+<ng-template #confirmDialog let-observer>
+  <app-ph-confirm-dialog [status]="dialogStatus" (cancel)="observer.complete()"
+    (confirm)="onConfirm($event, observer)" />
+</ng-template>
+
+<!-- ===== Reject reason dialog (single or bulk) ===== -->
+<ng-template #rejectDialog let-observer>
+  <app-ph-reject-reason-dialog [count]="pendingRejectCount" (cancel)="observer.complete()"
+    (confirm)="onConfirmReject($event, observer)" />
+</ng-template>
+
+<!-- ===== Delete confirmation dialog ===== -->
+<ng-template #deleteDialog let-observer>
+  @if (pendingDeleteRecord) {
+  <app-ph-delete-confirm-dialog [recordLabel]="pendingDeleteRecord.paramName" (cancel)="observer.complete()"
+    (confirm)="onConfirmDelete($event, observer)" />
+  }
+</ng-template>
