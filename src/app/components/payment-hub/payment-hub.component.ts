@@ -1,12 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { TuiDataList, TuiDropdown, TuiIcon } from '@taiga-ui/core';
+import { TuiIcon } from '@taiga-ui/core';
 import { TuiAvatar } from '@taiga-ui/kit';
+import { APP_ROLES, ROLE_LABELS } from '../../models/auth.model';
 import { MenuItem } from '../../models/menu-item.model';
+import { AuthService } from '../../services/auth/auth.service';
 import { MenuComponent } from '../menu/menu.component';
 import { SubmenuComponent } from '../submenu/submenu.component';
-// Đổi lại đường dẫn cho khớp vị trí thật của AuthService trong project của bạn
-import { AuthService } from '../../services/auth/auth.service';
 
 /**
  * App shell: sidebar menu, submenu and top bar stay mounted across
@@ -16,26 +16,15 @@ import { AuthService } from '../../services/auth/auth.service';
 @Component({
   selector: 'app-payment-hub',
   standalone: true,
-  imports: [
-    MenuComponent,
-    RouterOutlet,
-    SubmenuComponent,
-    TuiAvatar,
-    TuiIcon,
-    TuiDropdown,
-    TuiDataList,
-  ],
+  imports: [MenuComponent, RouterOutlet, SubmenuComponent, TuiAvatar, TuiIcon],
   templateUrl: './payment-hub.component.html',
   styleUrl: './payment-hub.component.scss',
 })
 export class PaymentHubComponent {
-  private readonly authService = inject(AuthService);
+  protected readonly auth = inject(AuthService);
 
   protected sidebarCollapsed = false;
   protected submenuCollapsed = false;
-  // Không dùng signal() ở đây vì [(tuiDropdownOpen)] là two-way binding thường
-  // (mở rộng thành userMenuOpen = $event) — gán trực tiếp vào WritableSignal sẽ sai kiểu.
-  protected userMenuOpen = false;
 
   protected readonly sidebar: MenuItem[] = [
     { icon: '@tui.layout-grid', label: 'Tổng quan' },
@@ -64,8 +53,20 @@ export class PaymentHubComponent {
 
   protected activeSubmenu = 'Tham số danh mục theo n...';
 
+  /** 2 ký tự đầu username, dùng làm chữ viết tắt trên avatar. */
+  protected get userInitials(): string {
+    return (this.auth.username() ?? '??').slice(0, 2).toUpperCase();
+  }
+
+  /** Nếu user có cả 2 role thì nối lại, vd "Người lập đề xuất, Người kiểm soát". */
+  protected get roleLabel(): string {
+    const labels = this.auth.roles().map((role) => ROLE_LABELS[role] ?? role);
+    return labels.length > 0 ? labels.join(', ') : 'Chưa gán quyền';
+  }
+
+  protected readonly APP_ROLES = APP_ROLES;
+
   protected logout(): void {
-    this.userMenuOpen = false;
-    this.authService.logout(); // xóa token + tự điều hướng về /login
+    this.auth.logout();
   }
 }

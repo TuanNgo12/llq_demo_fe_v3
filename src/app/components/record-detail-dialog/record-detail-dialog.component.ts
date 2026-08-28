@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { TuiButton, TuiIcon } from '@taiga-ui/core';
 import { TuiBadge } from '@taiga-ui/kit';
+import { APP_ROLES } from '../../models/auth.model';
 import {
   GROUP_CATEGORY_DISPLAY,
   GROUP_CATEGORY_STATUS,
@@ -8,6 +9,7 @@ import {
   groupCategoryStatusConfig,
   groupCategoryStatusLabel,
 } from '../../models/group-category.model';
+import { AuthService } from '../../services/auth/auth.service';
 
 type DetailKey =
   | 'paramName'
@@ -42,6 +44,10 @@ const DETAIL_FIELDS: DetailField[] = [
 })
 export class RecordDetailDialogComponent {
 
+  protected readonly auth = inject(AuthService);
+
+  protected readonly APP_ROLES = APP_ROLES;
+
   private _record!: GroupCategory;
 
   @Input({ required: true })
@@ -65,7 +71,7 @@ export class RecordDetailDialogComponent {
     return this._record;
   }
 
-  @Output() readonly cancel = new EventEmitter<GroupCategory>();
+  @Output() readonly cancel = new EventEmitter<number>();
 
   @Output() readonly deleteRecord = new EventEmitter<GroupCategory>();
 
@@ -136,8 +142,9 @@ export class RecordDetailDialogComponent {
     }
 
     // if (typeof v === 'object') {
-    //   return (value as { componentCode?: string }).componentCode ?? '-';
+    //   return v.componentCode || '-';
     // }
-    return String(v);
+
+    return v;
   }
 }

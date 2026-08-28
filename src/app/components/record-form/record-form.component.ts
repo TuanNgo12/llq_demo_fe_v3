@@ -204,16 +204,13 @@ export class RecordFormComponent implements OnChanges {
   setDuplicateError(fields: string[]): void {
     for (const field of fields) {
       const control = this.form.get(field);
-
       if (!control) {
         continue;
       }
-
       control.setErrors({
         ...control.errors,
         duplicate: true,
       });
-
       control.markAsTouched();
       control.markAsDirty();
     }

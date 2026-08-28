@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
 import {
   GroupCategory,
   GroupCategoryInput,
@@ -26,6 +26,17 @@ export class GroupCategoryService {
   error: string | null = null;
 
   private allRows: GroupCategory[] = [];
+
+  private lastFilters: FilterValues = {
+    paramType: '',
+    paramValue: '',
+    paramName: '',
+    componentCode: '',
+    status: null,
+    isActive: null,
+    pageNo: 0,
+    pageSize: 10,
+  };
 
   private currentPageIndex = 0;
 
@@ -88,6 +99,7 @@ export class GroupCategoryService {
 
     this.loading = true;
     this.error = null;
+    this.lastFilters = filters;
 
     const request: FilterValues = {
       ...filters,
@@ -119,32 +131,52 @@ export class GroupCategoryService {
     );
   }
 
-
-  loadRecords(): Observable<PageResponse<GroupCategory>> {
-    this.loading = true;
-    this.error = null;
-
-    return this.api.getAll().pipe(
-      tap({
-        next: (page) => {
-          this.allRows = page.content;
-          this.totalElements = page.totalElements;
-          this.totalPages = page.totalPages;
-          this.currentPageIndex = page.number;
-          this.loading = false;
-        },
-        error: () => {
-          this.loading = false;
-          this.error = 'Không thể tải danh sách bản ghi. Vui lòng thử lại.';
-        },
-      }),
-    );
+  refresh(): Observable<PageResponse<GroupCategory>> {
+    const filters: FilterValues = {
+      ...this.lastFilters,
+      pageNo: this.currentPageIndex,
+      pageSize: this.currentPageSize,
+    };
+    return this.searchRecords(filters);
   }
 
   getComponentCodes(): Observable<string[]> {
     return this.api.getAllComponent().pipe(
       map(Components => Components.map(Component => Component.componentCode))
     );
+  }
+
+  private updatePageData(
+    page: PageResponse<GroupCategory>
+  ): void {
+
+    this.allRows = page.content ?? [];
+
+    this.totalElements =
+      page.totalElements ?? 0;
+
+    this.totalPages =
+      page.totalPages ?? 0;
+
+    this.currentPageIndex =
+      page.number ?? 0;
+
+
+    this.componentCodeOptions = [
+      ...new Set(
+
+        page.content
+
+          .filter(
+            row => row.componentCode !== null
+          )
+
+          .map(
+            row =>
+              row.componentCode
+          )
+      )
+    ];
   }
 
   setPageSize(size: number): void {
@@ -154,44 +186,53 @@ export class GroupCategoryService {
     }
     this.currentPageSize = size;
     this.currentPageIndex = 0;
+    this.refresh().subscribe();
   }
 
   firstPage(): void {
-
     if (this.currentPageIndex !== 0) {
-
       this.currentPageIndex = 0;
+      this.refresh().subscribe();
     }
   }
 
 
   previousPage(): void {
-
     if (this.currentPageIndex > 0) {
-
       this.currentPageIndex--;
+      this.refresh().subscribe();
     }
   }
 
 
   nextPage(): void {
-
-    if (
-      this.currentPageIndex <
-      this.totalPages - 1
-    ) {
-
+    if (this.currentPageIndex < this.totalPages - 1) {
       this.currentPageIndex++;
+      this.refresh().subscribe();
     }
   }
 
   lastPage(): void {
-
     if (this.totalPages > 0) {
-
-      this.currentPageIndex =
-        this.totalPages - 1;
+      this.currentPageIndex = this.totalPages - 1;
+      this.refresh().subscribe();
     }
+  }
+
+  setPageIndex(index: number): void {
+    if (index < 0 || index === this.currentPageIndex) {
+      return;
+    }
+    this.currentPageIndex = index;
+    this.refresh().subscribe();
+  }
+
+  resolveById(id: number): Observable<GroupCategory> {
+    const cached = this.getById(id);
+    if (cached) {
+      return of(cached);
+    }
+    return this.api.fetchById(id);
   }
 
   getById(id: number): GroupCategory | undefined {
@@ -211,48 +252,46 @@ export class GroupCategoryService {
     return record;
   }
 
-  setPageIndex(index: number): void {
-    this.currentPageIndex = index;
-  }
+
 
   addRecord(input: GroupCategoryInput): Observable<GroupCategory> {
-    return this.api.create(input).pipe(tap(() => this.loadRecords().subscribe()));
+    return this.api.create(input).pipe(tap(() => this.refresh().subscribe()));
   }
 
   updateRecord(input: GroupCategoryInput): Observable<GroupCategory> {
-    return this.api.update(input).pipe(tap(() => this.loadRecords().subscribe()));
+    return this.api.update(input).pipe(tap(() => this.refresh().subscribe()));
   }
 
   deleteRecord(input: GroupCategoryInput): Observable<GroupCategory> {
-    return this.api.remove(input).pipe(tap(() => this.loadRecords().subscribe()));
+    return this.api.remove(input).pipe(tap(() => this.refresh().subscribe()));
   }
 
   submitForApproval(input: GroupCategoryInput[]): Observable<void> {
-    return this.api.updateStatus(input).pipe(tap(() => this.loadRecords().subscribe()));
+    return this.api.updateStatus(input).pipe(tap(() => this.refresh().subscribe()));
   }
 
   updateStatus(input: GroupCategoryInput[]): Observable<void> {
-    return this.api.updateStatus(input).pipe(tap(() => this.loadRecords().subscribe()));
+    return this.api.updateStatus(input).pipe(tap(() => this.refresh().subscribe()));
   }
 
   updateListStatus(ids: number[], status: number): Observable<void> {
-    return this.api.updateListStatus(ids, status).pipe(tap(() => this.loadRecords().subscribe()));
+    return this.api.updateListStatus(ids, status).pipe(tap(() => this.refresh().subscribe()));
   }
 
   panding(ids: number[], status: number): Observable<void> {
-    return this.api.panding(ids, status).pipe(tap(() => this.loadRecords().subscribe()));
+    return this.api.panding(ids, status).pipe(tap(() => this.refresh().subscribe()));
   }
 
   approve(ids: number[], status: number): Observable<void> {
-    return this.api.approve(ids, status).pipe(tap(() => this.loadRecords().subscribe()));
+    return this.api.approve(ids, status).pipe(tap(() => this.refresh().subscribe()));
   }
 
   cancel(ids: number[], status: number): Observable<void> {
-    return this.api.cancel(ids, status).pipe(tap(() => this.loadRecords().subscribe()));
+    return this.api.cancel(ids, status).pipe(tap(() => this.refresh().subscribe()));
   }
 
   reject(input: GroupCategoryInput[]): Observable<void> {
-    return this.api.updateStatus(input).pipe(tap(() => this.loadRecords().subscribe()));
+    return this.api.updateStatus(input).pipe(tap(() => this.refresh().subscribe()));
   }
 
   exportExcel(input: FilterValues): Observable<HttpResponse<Blob>> {

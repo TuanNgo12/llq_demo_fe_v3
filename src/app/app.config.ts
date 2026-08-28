@@ -2,7 +2,7 @@ import { ApplicationConfig, provideZoneChangeDetection, signal } from '@angular/
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { provideTaiga, tuiTextfieldOptionsProvider } from '@taiga-ui/core';
-import { authInterceptor } from './services/auth/auth.interceptor';
+import { authInterceptor } from './interceptors/auth.interceptor';
 
 import { routes } from './app.routes';
 

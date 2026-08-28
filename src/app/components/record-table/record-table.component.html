@@ -22,14 +22,22 @@
       } @else {
       @switch (commonSelectedStatus) {
       @case (GROUP_CATEGORY_STATUS.PENDING) {
+      @if (auth.hasRole(APP_ROLES.CHECKER)) {
       <button tuiButton type="button" size="s" (click)="emitBulkApprove()">
         Phê duyệt ({{ selectedRows.length }})
       </button>
+      } @else {
+      <span class="bulk-bar__hint">Chỉ người kiểm soát (CHECKER) mới có thể phê duyệt.</span>
+      }
       }
       @case (GROUP_CATEGORY_STATUS.APPROVED) {
+      @if (auth.hasRole(APP_ROLES.MAKER)) {
       <button tuiButton type="button" size="s" (click)="emitBulkCancel()">
         Hủy duyệt ({{ selectedRows.length }})
       </button>
+      } @else {
+      <span class="bulk-bar__hint">Chỉ người lập đề xuất (MAKER) mới có thể hủy duyệt.</span>
+      }
       }
       @default {
       <span class="bulk-bar__hint">Bản ghi ở trạng thái này không có thao tác phê duyệt.</span>

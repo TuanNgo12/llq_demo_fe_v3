@@ -44,13 +44,24 @@ export class RecordFormPageComponent implements OnInit {
     }
 
     this.resolvingEdit = true;
+    this.resolveEdit(Number(idParam));
+  }
 
-    this.groupCategoryService.loadRecords().subscribe({
-      next: () => {
-        this.resolveEdit(Number(idParam));
-
+  private resolveEdit(id: number): void {
+    this.groupCategoryService.resolveById(id).subscribe({
+      next: (record) => {
+        this.resolvingEdit = false;
+        this.mode = 'update';
+        this.editingId = record.id;
+        this.lockParamType = true;
+        this.heading = 'Chỉnh sửa tham số danh mục theo nhóm';
+        this.breadcrumbLabel = 'Chỉnh sửa';
+        this.initialValue = toGroupCategoryInput(record);
       },
-      error: () => this.resolveEdit(Number(idParam)),
+      error: () => {
+        this.resolvingEdit = false;
+        this.editRecordNotFound = true;
+      },
     });
   }
 
@@ -67,23 +78,6 @@ export class RecordFormPageComponent implements OnInit {
     });
   }
 
-  private resolveEdit(id: number): void {
-    this.resolvingEdit = false;
-    const record = this.groupCategoryService.getById(id);
-    console.log('record:', record);
-    if (!record) {
-      this.editRecordNotFound = true;
-      return;
-    }
-
-    this.mode = 'update';
-    this.editingId = record.id;
-    this.lockParamType = true;
-    this.heading = 'Chỉnh sửa tham số danh mục theo nhóm';
-    this.breadcrumbLabel = 'Chỉnh sửa';
-    this.initialValue = toGroupCategoryInput(record);
-    console.log('initialValue:', this.initialValue);
-  }
 
   private resolveAddOrCopy(): void {
     const copySource = this.groupCategoryService.consumeCopySource();

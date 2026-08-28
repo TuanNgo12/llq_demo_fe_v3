@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import type { ICellRendererParams } from 'ag-grid-community';
 import { TuiIcon } from '@taiga-ui/core';
+import { APP_ROLES } from '../../../models/auth.model';
 import { GROUP_CATEGORY_STATUS, GroupCategory } from '../../../models/group-category.model';
+import { AuthService } from '../../../services/auth/auth.service';
 
 /** Extra params passed in via `colDef.cellRendererParams` (record-table.component.ts). */
 export interface ActionsCellParams extends ICellRendererParams<GroupCategory> {
@@ -17,10 +19,12 @@ export interface ActionsCellParams extends ICellRendererParams<GroupCategory> {
   standalone: true,
   imports: [TuiIcon],
   template: `
-    <div class="row-actions"> 
+    <div class="row-actions">
+      @if (canCopy) {
       <button type="button" class="row-actions__btn row-actions__btn_copy" title="Sao chép" (click)="copy()">
         <tui-icon icon="@tui.copy" />
       </button>
+      }
       @if(canEdit){
       <button type="button" class="row-actions__btn row-actions__btn_edit" title="Sửa" (click)="edit()">
         <tui-icon icon="@tui.pencil" />
@@ -31,15 +35,22 @@ export interface ActionsCellParams extends ICellRendererParams<GroupCategory> {
         <tui-icon icon="@tui.trash-2" />
       </button>
       }
+      @if (!canCopy && !canEdit && !canDelete) {
+      <span class="row-actions__none">—</span>
+      }
     </div>
   `,
   styleUrl: './actions-cell.component.scss',
 })
 export class ActionsCellComponent implements ICellRendererAngularComp {
 
+  private readonly auth = inject(AuthService);
+
   private params!: ActionsCellParams;
 
   protected canEdit = true;
+
+  protected canCopy = true;
 
   protected canDelete = true;
 
@@ -58,8 +69,13 @@ export class ActionsCellComponent implements ICellRendererAngularComp {
       params.data?.status === GROUP_CATEGORY_STATUS.APPROVED ||
       params.data?.status === GROUP_CATEGORY_STATUS.PENDING;
     const is_Display = params.data?.isDisplay == 2;
-    this.canEdit = !isLocked;
-    this.canDelete = !is_Display && !isLocked;
+    // Sao chép/Sửa/Xóa đều dẫn tới /add hoặc /update hoặc /delete ở BE — cả 3
+    // endpoint này chỉ MAKER được gọi (xem GroupCategoryController), nên
+    // CHECKER sẽ không thấy 3 nút này ở bất kỳ dòng nào.
+    const isMaker = this.auth.hasRole(APP_ROLES.MAKER);
+    this.canCopy = isMaker;
+    this.canEdit = !isLocked && isMaker;
+    this.canDelete = !is_Display && !isLocked && isMaker;
   }
 
   protected edit(): void {

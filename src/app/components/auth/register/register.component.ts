@@ -1,85 +1,128 @@
 import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
-  AbstractControl,
-  FormBuilder,
-  ReactiveFormsModule,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-import { AuthApiService } from '../../../services/auth/auth-api.service';
+  TuiButton,
+  TuiError,
+  TuiIcon,
+  TuiInput,
+  TuiLabel,
+  TuiTextfield,
+  TuiTitle,
+  tuiValidationErrorsProvider,
+} from '@taiga-ui/core';
 import { AuthService } from '../../../services/auth/auth.service';
 
-/** Validator cấp form: confirmPassword phải khớp password */
-function passwordsMatchValidator(): ValidatorFn {
-  return (group: AbstractControl): ValidationErrors | null => {
-    const password = group.get('password')?.value;
-    const confirm = group.get('confirmPassword')?.value;
-    return password && confirm && password !== confirm ? { passwordMismatch: true } : null;
-  };
+/**
+ * Đặt lỗi `passwordMismatch` trực tiếp lên control `confirmPassword` (không
+ * chỉ ở FormGroup) để `tui-error formControlName="confirmPassword"` đọc được.
+ */
+function passwordsMatchValidator(group: AbstractControl): ValidationErrors | null {
+  const password = group.get('password');
+  const confirmPassword = group.get('confirmPassword');
+
+  if (!password || !confirmPassword) {
+    return null;
+  }
+
+  if (confirmPassword.value && password.value !== confirmPassword.value) {
+    confirmPassword.setErrors({ ...confirmPassword.errors, passwordMismatch: true });
+  } else if (confirmPassword.hasError('passwordMismatch')) {
+    const { passwordMismatch, ...rest } = confirmPassword.errors ?? {};
+    confirmPassword.setErrors(Object.keys(rest).length ? rest : null);
+  }
+
+  return null;
 }
 
 @Component({
-  selector: 'app-register',
+  selector: 'app-ph-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    TuiButton,
+    TuiError,
+    TuiIcon,
+    TuiInput,
+    TuiLabel,
+    TuiTextfield,
+    TuiTitle,
+  ],
+  providers: [
+    tuiValidationErrorsProvider({
+      required: 'Không được để trống',
+      email: 'Email không hợp lệ',
+      minlength: 'Chưa đủ số ký tự tối thiểu',
+      maxlength: 'Vượt quá số ký tự tối đa',
+      passwordMismatch: 'Mật khẩu nhập lại không khớp',
+    }),
+  ],
   templateUrl: './register.component.html',
-  styleUrls: ['../auth-shell.scss', './register.component.scss'],
+  styleUrl: './register.component.scss',
 })
 export class RegisterComponent {
-  private fb = inject(FormBuilder);
-  private authApi = inject(AuthApiService);
-  private authService = inject(AuthService);
-  private router = inject(Router);
+  private readonly fb = inject(FormBuilder);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
-  loading = signal(false);
-  errorMessage = signal<string | null>(null);
-  showPassword = signal(false);
-
-  form = this.fb.nonNullable.group(
+  // Khớp validate RegisterRequest ở BE: username 3-50 ký tự, email hợp lệ,
+  // password tối thiểu 8 ký tự.
+  protected readonly form = this.fb.nonNullable.group(
     {
-      username: ['', [Validators.required, Validators.minLength(4)]],
+      username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required]],
     },
-    { validators: passwordsMatchValidator() }
+    { validators: passwordsMatchValidator },
   );
 
-  get f() {
-    return this.form.controls;
+  protected readonly loading = signal(false);
+  protected readonly formError = signal<string | null>(null);
+  protected readonly showPassword = signal(false);
+
+  protected togglePassword(): void {
+    this.showPassword.update((value) => !value);
   }
 
-  togglePassword(): void {
-    this.showPassword.update(v => !v);
-  }
-
-  submit(): void {
+  protected onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
     this.loading.set(true);
-    this.errorMessage.set(null);
+    this.formError.set(null);
 
     const { username, email, password } = this.form.getRawValue();
 
-    this.authApi.register({ username, email, password }).subscribe({
-      next: (res) => {
-        this.authService.setToken(res.accessToken);
-        this.router.navigateByUrl('/login');
-      },
-      error: (err) => {
+    this.authService.register({ username, email, password }).subscribe({
+      next: () => {
         this.loading.set(false);
-        this.errorMessage.set(
-          err.status === 409
-            ? 'Tên đăng nhập hoặc email đã được sử dụng.'
-            : 'Đăng ký thất bại. Vui lòng thử lại sau.'
-        );
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/';
+        this.router.navigateByUrl(returnUrl);
+      },
+      error: (err: unknown) => {
+        this.loading.set(false);
+        this.formError.set(this.resolveErrorMessage(err));
       },
     });
+  }
+
+  /** BE trả 409 kèm message (vd "Username đã tồn tại") khi trùng username/email. */
+  private resolveErrorMessage(err: unknown): string {
+    const status = (err as { status?: number } | undefined)?.status;
+    const body = (err as { error?: unknown } | undefined)?.error;
+    const bodyText = typeof body === 'string' ? body : undefined;
+
+    if (status === 409) {
+      return bodyText ?? 'Tên đăng nhập hoặc email đã tồn tại.';
+    }
+    if (status === 400) {
+      return bodyText ?? 'Thông tin đăng ký chưa hợp lệ. Vui lòng kiểm tra lại.';
+    }
+    return 'Đăng ký thất bại. Vui lòng thử lại sau.';
   }
 }

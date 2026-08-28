@@ -1,117 +1,63 @@
-<div class="auth-shell">
-    <!-- Panel thương hiệu -->
-    <aside class="brand-panel">
-        <div class="brand-panel__content">
-            <div class="brand-mark">
-                <span class="brand-mark__dot"></span>
-                PAYMENT HUB
-            </div>
-
-            <h1 class="brand-headline">
-                Tạo tài khoản,<br />
-                bắt đầu vận hành.
-            </h1>
-            <p class="brand-subline">
-                Mỗi tài khoản gắn với vai trò và quyền cụ thể — khai báo, gửi duyệt,
-                phê duyệt đều được ghi vết đầy đủ.
-            </p>
-
-            <ul class="brand-stats">
-                <li><span>99.98%</span>Uptime hệ thống</li>
-                <li><span>24/7</span>Giám sát giao dịch</li>
-            </ul>
+<div class="register">
+    <form class="register__card" [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="register__brand">
+            <tui-icon icon="@tui.credit-card" class="register__brand-icon" />
+            <span>PAYMENT <b>HUB</b></span>
         </div>
 
-        <svg class="brand-network" viewBox="0 0 480 480" aria-hidden="true">
-            <g class="network-lines">
-                <line x1="80" y1="120" x2="220" y2="200" />
-                <line x1="220" y1="200" x2="380" y2="140" />
-                <line x1="220" y1="200" x2="180" y2="340" />
-                <line x1="220" y1="200" x2="360" y2="320" />
-                <line x1="180" y1="340" x2="90" y2="380" />
-            </g>
-            <g class="network-nodes">
-                <circle cx="80" cy="120" r="5" />
-                <circle cx="220" cy="200" r="8" class="network-nodes__hub" />
-                <circle cx="380" cy="140" r="5" />
-                <circle cx="180" cy="340" r="5" />
-                <circle cx="360" cy="320" r="5" />
-                <circle cx="90" cy="380" r="5" />
-            </g>
-        </svg>
-    </aside>
+        <h1 tuiTitle class="register__heading">Tạo tài khoản mới</h1>
+        <p class="register__subtext">Tài khoản mới mặc định có quyền MAKER (tạo, sửa, gửi duyệt).</p>
 
-    <!-- Panel form -->
-    <main class="form-panel">
-        <div class="form-card">
-            <div class="form-card__header">
-                <h2>Đăng ký tài khoản</h2>
-                <p>Điền thông tin bên dưới để tạo tài khoản mới.</p>
-            </div>
-
-            @if (errorMessage()) {
-            <div class="form-alert" role="alert">{{ errorMessage() }}</div>
-            }
-
-            <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-                <div class="form-field">
-                    <label for="username">Tên đăng nhập</label>
-                    <input id="username" type="text" formControlName="username" autocomplete="username"
-                        placeholder="vd: gdv01" />
-                    @if (f.username.invalid && f.username.touched) {
-                    <span class="field-error">Tên đăng nhập tối thiểu 4 ký tự.</span>
-                    }
-                </div>
-
-                <div class="form-field">
-                    <label for="email">Email</label>
-                    <input id="email" type="email" formControlName="email" autocomplete="email"
-                        placeholder="ban@congty.vn" />
-                    @if (f.email.invalid && f.email.touched) {
-                    <span class="field-error">Email không hợp lệ.</span>
-                    }
-                </div>
-
-                <div class="form-field">
-                    <label for="password">Mật khẩu</label>
-                    <div class="password-input">
-                        <input id="password" [type]="showPassword() ? 'text' : 'password'" formControlName="password"
-                            autocomplete="new-password" placeholder="••••••••" />
-                        <button type="button" class="password-toggle" (click)="togglePassword()"
-                            [attr.aria-label]="showPassword() ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'">
-                            {{ showPassword() ? 'Ẩn' : 'Hiện' }}
-                        </button>
-                    </div>
-                    @if (f.password.invalid && f.password.touched) {
-                    <span class="field-error">Mật khẩu tối thiểu 6 ký tự.</span>
-                    } @else {
-                    <span class="form-hint">Tối thiểu 6 ký tự.</span>
-                    }
-                </div>
-
-                <div class="form-field">
-                    <label for="confirmPassword">Xác nhận mật khẩu</label>
-                    <input id="confirmPassword" [type]="showPassword() ? 'text' : 'password'"
-                        formControlName="confirmPassword" autocomplete="new-password" placeholder="••••••••" />
-                    @if (form.errors?.['passwordMismatch'] && f.confirmPassword.touched) {
-                    <span class="field-error">Mật khẩu xác nhận không khớp.</span>
-                    }
-                </div>
-
-                <button type="submit" class="btn-primary" [disabled]="loading()">
-                    @if (loading()) {
-                    <span class="spinner" aria-hidden="true"></span>
-                    Đang tạo tài khoản...
-                    } @else {
-                    Tạo tài khoản
-                    }
-                </button>
-            </form>
-
-            <p class="form-footer">
-                Đã có tài khoản?
-                <a routerLink="/login">Đăng nhập</a>
-            </p>
+        @if (formError()) {
+        <div class="register__error">
+            <tui-icon icon="@tui.alert-triangle" />
+            {{ formError() }}
         </div>
-    </main>
+        }
+
+        <div class="register__field">
+            <label tuiLabel>Tên đăng nhập</label>
+            <tui-textfield>
+                <input tuiInput formControlName="username" placeholder="3-50 ký tự" autocomplete="username" />
+                <tui-error formControlName="username" [order]="['required', 'minlength', 'maxlength']" />
+            </tui-textfield>
+        </div>
+
+        <div class="register__field">
+            <label tuiLabel>Email</label>
+            <tui-textfield>
+                <input tuiInput type="email" formControlName="email" placeholder="ten@congty.com"
+                    autocomplete="email" />
+                <tui-error formControlName="email" [order]="['required', 'email']" />
+            </tui-textfield>
+        </div>
+
+        <div class="register__field">
+            <label tuiLabel>Mật khẩu</label>
+            <tui-textfield>
+                <input tuiInput [type]="showPassword() ? 'text' : 'password'" formControlName="password"
+                    placeholder="Tối thiểu 8 ký tự" autocomplete="new-password" />
+                <tui-error formControlName="password" [order]="['required', 'minlength']" />
+            </tui-textfield>
+            <button type="button" class="register__password-toggle"
+                [attr.aria-label]="showPassword() ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'" (click)="togglePassword()">
+                <tui-icon [icon]="showPassword() ? '@tui.eye-off' : '@tui.eye'" />
+            </button>
+        </div>
+
+        <div class="register__field">
+            <label tuiLabel>Nhập lại mật khẩu</label>
+            <tui-textfield>
+                <input tuiInput [type]="showPassword() ? 'text' : 'password'" formControlName="confirmPassword"
+                    placeholder="Nhập lại mật khẩu" autocomplete="new-password" />
+                <tui-error formControlName="confirmPassword" [order]="['required', 'passwordMismatch']" />
+            </tui-textfield>
+        </div>
+
+        <button tuiButton type="submit" size="l" class="register__submit" [disabled]="loading()">
+            {{ loading() ? 'Đang tạo tài khoản...' : 'Đăng ký' }}
+        </button>
+
+        <a routerLink="/login" class="register__switch-link">Đã có tài khoản? Đăng nhập</a>
+    </form>
 </div>

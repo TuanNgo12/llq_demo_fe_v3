@@ -1,6 +1,7 @@
 import { Component, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { TuiButton, TuiDialogService, TuiIcon, TuiNotificationService, TuiTitle } from '@taiga-ui/core';
+import { APP_ROLES } from '../../models/auth.model';
 import {
   GroupCategory,
   toGroupCategoryInput,
@@ -19,6 +20,7 @@ import { FilterPanelComponent } from '../filter-panel/filter-panel.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { AuthService } from '../../services/auth/auth.service';
 
 type DialogObserver = { complete: () => void };
 
@@ -41,6 +43,9 @@ type DialogObserver = { complete: () => void };
   styleUrl: './record-list-page.component.scss',
 })
 export class RecordListPageComponent implements OnInit {
+  protected readonly auth = inject(AuthService);
+  protected readonly APP_ROLES = APP_ROLES;
+
   private readonly dialogs = inject(TuiDialogService);
   private readonly notifications = inject(TuiNotificationService);
   protected readonly groupCategoryService = inject(GroupCategoryService);
@@ -112,7 +117,17 @@ export class RecordListPageComponent implements OnInit {
   }
 
   protected onResetFilters(): void {
-    this.groupCategoryService.loadRecords().subscribe({ error: () => { } });
+    this.filters = {
+      paramType: '',
+      paramValue: '',
+      paramName: '',
+      componentCode: '',
+      status: null,
+      isActive: null,
+      pageNo: 0,
+      pageSize: 10,
+    };
+    this.groupCategoryService.searchRecords(this.filters).subscribe();
   }
 
   protected onSearch(filters: FilterValues): void {
@@ -130,7 +145,7 @@ export class RecordListPageComponent implements OnInit {
   }
 
   protected fetchRecords(): void {
-    this.groupCategoryService.loadRecords().subscribe({ error: () => { } });
+    this.groupCategoryService.searchRecords(this.filters).subscribe();
   }
 
   protected exportExcel(filters: FilterValues): void {
@@ -251,9 +266,10 @@ export class RecordListPageComponent implements OnInit {
     });
   }
 
-  protected onCancelDetail(record: GroupCategory, observer: DialogObserver): void {
+  protected onCancelDetail(record: number, observer: DialogObserver): void {
     observer.complete();
-    this.listCategories = [record];
+    this.pendingRejectIds = [record];
+    console.log(this.pendingRejectIds);
     this.openConfirmDialog(GROUP_CATEGORY_STATUS.CANCELLED);
   }
 
@@ -278,6 +294,7 @@ export class RecordListPageComponent implements OnInit {
 
   protected onBulkCancel(ids: number[]): void {
     this.openConfirmDialog(GROUP_CATEGORY_STATUS.CANCELLED);
+    console.log(this.pendingRejectIds);
     this.pendingRejectIds = ids;
   }
 

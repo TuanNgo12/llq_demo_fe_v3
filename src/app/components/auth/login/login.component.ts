@@ -1,63 +1,67 @@
 import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import {
+    TuiButton,
+    TuiError,
+    TuiIcon,
+    TuiInput,
+    TuiLabel,
+    TuiTextfield,
+    TuiTitle,
+    tuiValidationErrorsProvider,
+} from '@taiga-ui/core';
 import { AuthService } from '../../../services/auth/auth.service';
-import { AuthApiService } from '../../../services/auth/auth-api.service';
 
 @Component({
-    selector: 'app-login',
+    selector: 'app-ph-login',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, RouterLink],
+    imports: [ReactiveFormsModule, RouterLink, TuiButton, TuiError, TuiIcon, TuiInput, TuiLabel, TuiTextfield, TuiTitle],
+    providers: [
+        tuiValidationErrorsProvider({
+            required: 'Không được để trống',
+        }),
+    ],
     templateUrl: './login.component.html',
-    styleUrls: ['../auth-shell.scss', './login.component.scss'],
+    styleUrl: './login.component.scss',
 })
 export class LoginComponent {
-    private fb = inject(FormBuilder);
-    private authApi = inject(AuthApiService);
-    private authService = inject(AuthService);
-    private router = inject(Router);
-    private route = inject(ActivatedRoute);
+    private readonly fb = inject(FormBuilder);
+    private readonly authService = inject(AuthService);
+    private readonly router = inject(Router);
+    private readonly route = inject(ActivatedRoute);
 
-    loading = signal(false);
-    errorMessage = signal<string | null>(null);
-    showPassword = signal(false);
-
-    form = this.fb.nonNullable.group({
-        username: ['', [Validators.required]],
-        password: ['', [Validators.required, Validators.minLength(6)]],
+    protected readonly form = this.fb.nonNullable.group({
+        username: ['', Validators.required],
+        password: ['', Validators.required],
     });
 
-    get f() {
-        return this.form.controls;
+    protected readonly loading = signal(false);
+    protected readonly loginError = signal<string | null>(null);
+    protected readonly showPassword = signal(false);
+
+    protected togglePassword(): void {
+        this.showPassword.update((value) => !value);
     }
 
-    togglePassword(): void {
-        this.showPassword.update(v => !v);
-    }
-
-    submit(): void {
+    protected onSubmit(): void {
         if (this.form.invalid) {
             this.form.markAllAsTouched();
             return;
         }
 
         this.loading.set(true);
-        this.errorMessage.set(null);
+        this.loginError.set(null);
 
-        this.authApi.login(this.form.getRawValue()).subscribe({
-            next: (res) => {
-                this.authService.setToken(res.accessToken);
-                const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '';
+        this.authService.login(this.form.getRawValue()).subscribe({
+            next: () => {
+                this.loading.set(false);
+                const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/';
                 this.router.navigateByUrl(returnUrl);
             },
-            error: (err) => {
+            error: () => {
                 this.loading.set(false);
-                this.errorMessage.set(
-                    err.status === 401
-                        ? 'Tên đăng nhập hoặc mật khẩu không đúng.'
-                        : 'Đăng nhập thất bại. Vui lòng thử lại sau.'
-                );
+                this.loginError.set('Sai tên đăng nhập hoặc mật khẩu. Vui lòng thử lại.');
             },
         });
     }

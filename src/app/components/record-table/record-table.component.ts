@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ChangeDetectorRef } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ChangeDetectorRef, inject } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import type {
   CellClickedEvent,
@@ -18,6 +18,8 @@ import {
   GroupCategoryStatus,
 } from '../../models/group-category.model';
 import { FilterValues } from '../../models/filter-values.model';
+import { APP_ROLES } from '../../models/auth.model';
+import { AuthService } from '../../services/auth/auth.service';
 import { ActionsCellComponent, ActionsCellParams } from './cells/actions-cell.component';
 import { StatusCellComponent } from './cells/status-cell.component';
 import { IsActiveCellComponent } from './cells/isActive-cell.component';
@@ -148,8 +150,6 @@ export class RecordTableComponent implements OnChanges {
 
   protected selectedRows: GroupCategory[] = [];
 
-  @Output() readonly selectedIds = new EventEmitter<number[]>();
-
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['pageIndex'] && !changes['pageIndex'].firstChange) {
       this.clearSelection();
@@ -159,6 +159,10 @@ export class RecordTableComponent implements OnChanges {
   protected onGridReady(event: GridReadyEvent<GroupCategory>): void {
     this.gridApi = event.api;
   }
+
+  protected readonly auth = inject(AuthService);
+
+  protected readonly APP_ROLES = APP_ROLES;
 
   constructor(private cdr: ChangeDetectorRef) { }
 

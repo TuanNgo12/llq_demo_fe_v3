@@ -1,4 +1,7 @@
 import { Routes } from '@angular/router';
+import { APP_ROLES } from './models/auth.model';
+import { authGuard } from './guards/auth.guard';
+import { roleGuard } from './guards/role.guard';
 
 export const routes: Routes = [
   {
@@ -11,6 +14,7 @@ export const routes: Routes = [
   },
   {
     path: '',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./components/payment-hub/payment-hub.component').then(
         (m) => m.PaymentHubComponent,
@@ -25,6 +29,7 @@ export const routes: Routes = [
       },
       {
         path: 'new',
+        canActivate: [roleGuard([APP_ROLES.MAKER])],
         loadComponent: () =>
           import('./components/record-form-page/record-form-page.component').then(
             (m) => m.RecordFormPageComponent,
@@ -32,6 +37,7 @@ export const routes: Routes = [
       },
       {
         path: 'edit/:id',
+        canActivate: [roleGuard([APP_ROLES.MAKER])],
         loadComponent: () =>
           import('./components/record-form-page/record-form-page.component').then(
             (m) => m.RecordFormPageComponent,

@@ -17,8 +17,8 @@ export class RecordApiService {
     return this.http.get<Component[]>(this.baseUrl_component);
   }
 
-  getAll(): Observable<PageResponse<GroupCategory>> {
-    return this.http.get<PageResponse<GroupCategory>>(this.baseUrl);
+  fetchById(id: number): Observable<GroupCategory> {
+    return this.http.get<GroupCategory>(`${this.baseUrl}/update/${id}`);
   }
 
   create(input: GroupCategoryInput): Observable<GroupCategory> {

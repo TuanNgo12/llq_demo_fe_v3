@@ -6,9 +6,11 @@
 
 <div class="page__header">
   <h1 tuiTitle>Tham số danh mục theo nhóm</h1>
+  @if (auth.hasRole(APP_ROLES.MAKER)) {
   <button tuiButton type="button" size="m" iconStart="@tui.plus" routerLink="/new">
     Thêm mới
   </button>
+  }
 </div>
 
 <!-- Filters -->

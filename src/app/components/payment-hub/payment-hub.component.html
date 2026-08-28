@@ -21,33 +21,17 @@
           <tui-icon icon="@tui.chevron-down" />
         </button>
 
-        <button type="button" class="topbar__user" [tuiDropdown]="userMenu" [(tuiDropdownOpen)]="userMenuOpen">
-          <div tuiAvatar="HT" size="s" appearance="primary"></div>
+        <div class="topbar__user">
+          <div [tuiAvatar]="userInitials" size="s" appearance="primary"></div>
           <div class="topbar__user-info">
-            <span class="topbar__user-name">Hoàng Văn Thuận</span>
-            <span class="topbar__user-role">Chuyên viên</span>
+            <span class="topbar__user-name">{{ auth.username() }}</span>
+            <span class="topbar__user-role">{{ roleLabel }}</span>
           </div>
-          <tui-icon icon="@tui.chevron-down" class="topbar__user-chevron" />
+        </div>
+
+        <button type="button" class="topbar__icon-btn" title="Đăng xuất" (click)="logout()">
+          <tui-icon icon="@tui.log-out" />
         </button>
-
-        <ng-template #userMenu>
-          <tui-data-list class="user-menu">
-            <div class="user-menu__header">
-              <div tuiAvatar="HT" size="m" appearance="primary"></div>
-              <div class="topbar__user-info">
-                <span class="topbar__user-name">Hoàng Văn Thuận</span>
-                <span class="topbar__user-role">Chuyên viên</span>
-              </div>
-            </div>
-
-            <div class="user-menu__divider"></div>
-
-            <button tuiOption type="button" class="user-menu__logout" (click)="logout()">
-              <tui-icon icon="@tui.log-out" />
-              Đăng xuất
-            </button>
-          </tui-data-list>
-        </ng-template>
       </div>
     </header>
 
