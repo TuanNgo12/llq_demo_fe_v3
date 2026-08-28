@@ -35,9 +35,6 @@ export interface ActionsCellParams extends ICellRendererParams<GroupCategory> {
         <tui-icon icon="@tui.trash-2" />
       </button>
       }
-      @if (!canCopy && !canEdit && !canDelete) {
-      <span class="row-actions__none">—</span>
-      }
     </div>
   `,
   styleUrl: './actions-cell.component.scss',

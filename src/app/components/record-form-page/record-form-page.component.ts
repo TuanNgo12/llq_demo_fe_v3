@@ -130,11 +130,12 @@ export class RecordFormPageComponent implements OnInit {
       },
       error: (error) => {
         if (error.status === 409) {
-          const message = error.error?.message;
-          if (message) {
-            const duplicateErrors = JSON.parse(message);
-            this.recordForm.setDuplicateError(Object.keys(duplicateErrors));
-          }
+          this.recordForm.setDuplicateError([
+            'paramValue',
+            'paramType',
+            'effectiveDate',
+            'endEffectiveDate'
+          ]);
           return;
         }
         this.notifications
