@@ -24,6 +24,7 @@ import { ActionsCellComponent, ActionsCellParams } from './cells/actions-cell.co
 import { StatusCellComponent } from './cells/status-cell.component';
 import { IsActiveCellComponent } from './cells/isActive-cell.component';
 import { paymentHubGridTheme } from './record-table.theme';
+import { HasRoleDirective } from '../../directive/has-role.directive';
 
 const SELECTION_COLUMN_ID = 'ag-Grid-SelectionColumn';
 const PAGE_SIZE = 10;
@@ -31,7 +32,7 @@ const PAGE_SIZE = 10;
 @Component({
   selector: 'app-ph-record-table',
   standalone: true,
-  imports: [AgGridAngular, TuiBadge, TuiButton, TuiIcon, TuiPagination],
+  imports: [AgGridAngular, TuiBadge, TuiButton, TuiIcon, TuiPagination, HasRoleDirective],
   templateUrl: './record-table.component.html',
   styleUrl: './record-table.component.scss',
 })

@@ -4,10 +4,12 @@
       Danh sách bản ghi
       <span tuiBadge appearance="neutral" size="s">{{ totalCount }}</span>
     </div>
+    @if (auth.hasRole(APP_ROLES.CHECKER) || auth.hasRole(APP_ROLES.ADMIN)) {
     <button tuiButton type="button" appearance="secondary" size="m" iconStart="@tui.download" [style.color]="'black'"
       (click)="exportClick.emit()">
       Xuất Excel
     </button>
+    }
   </div>
 
   @if (selectedRows.length > 0) {
@@ -22,22 +24,24 @@
       } @else {
       @switch (commonSelectedStatus) {
       @case (GROUP_CATEGORY_STATUS.PENDING) {
-      @if (auth.hasRole(APP_ROLES.CHECKER)) {
-      <button tuiButton type="button" size="s" (click)="emitBulkApprove()">
+      <button *appHasRole="[APP_ROLES.CHECKER, APP_ROLES.ADMIN]; else noCheckerBulkHint" tuiButton type="button"
+        size="s" (click)="emitBulkApprove()">
         Phê duyệt ({{ selectedRows.length }})
       </button>
-      } @else {
-      <span class="bulk-bar__hint">Chỉ người kiểm soát (CHECKER) mới có thể phê duyệt.</span>
-      }
+      <ng-template #noCheckerBulkHint>
+        <span class="bulk-bar__hint">Chỉ người kiểm soát (CHECKER) mới có thể phê duyệt.</span>
+      </ng-template>
       }
       @case (GROUP_CATEGORY_STATUS.APPROVED) {
-      @if (auth.hasRole(APP_ROLES.MAKER)) {
-      <button tuiButton type="button" size="s" (click)="emitBulkCancel()">
+      <button *appHasRole="[APP_ROLES.CHECKER, APP_ROLES.ADMIN]; else noMakerBulkHint" tuiButton type="button" size="s"
+        (click)="emitBulkCancel()">
         Hủy duyệt ({{ selectedRows.length }})
       </button>
-      } @else {
-      <span class="bulk-bar__hint">Chỉ người lập đề xuất (MAKER) mới có thể hủy duyệt.</span>
-      }
+      <ng-template #noMakerBulkHint>
+        <span class="bulk-bar__hint">
+          Chỉ người kiểm soát (CHECKER) hoặc quản trị viên (ADMIN) mới có thể hủy phê duyệt.
+        </span>
+      </ng-template>
       }
       @default {
       <span class="bulk-bar__hint">Bản ghi ở trạng thái này không có thao tác phê duyệt.</span>

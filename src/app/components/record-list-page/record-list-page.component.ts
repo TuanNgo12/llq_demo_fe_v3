@@ -21,6 +21,8 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
 import { HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../services/auth/auth.service';
+import { HasRoleDirective } from '../../directive/has-role.directive';
+
 
 type DialogObserver = { complete: () => void };
 
@@ -38,6 +40,7 @@ type DialogObserver = { complete: () => void };
     TuiButton,
     TuiIcon,
     TuiTitle,
+    HasRoleDirective,
   ],
   templateUrl: './record-list-page.component.html',
   styleUrl: './record-list-page.component.scss',

@@ -57,54 +57,50 @@
   <div class="detail__footer">
     @switch (record.status) {
     @case (GROUP_CATEGORY_STATUS.NEW) {
-    @if (auth.hasRole(APP_ROLES.MAKER)) {
     @if (canDelete) {
-    <button tuiButton type="button" appearance="secondary" size="m" (click)="deleteRecord.emit(record)">
+    <button *appHasRole="APP_ROLES.ADMIN" tuiButton type="button" appearance="secondary" size="m"
+      (click)="deleteRecord.emit(record)">
       Xóa
     </button>
     }
-    <button tuiButton type="button" size="m" (click)="submitForApproval.emit(record.id)">
+    <button *appHasRole="[APP_ROLES.MAKER, APP_ROLES.ADMIN]" tuiButton type="button" size="m"
+      (click)="submitForApproval.emit(record.id)">
       Gửi duyệt
     </button>
-    }
     }
     @case (GROUP_CATEGORY_STATUS.PENDING) {
-    @if (auth.hasRole(APP_ROLES.CHECKER)) {
-    <button tuiButton type="button" appearance="secondary" size="m" (click)="reject.emit(record)">
-      Từ chối
-    </button>
-    <button tuiButton type="button" size="m" (click)="approve.emit(record.id)">
-      Phê duyệt
-    </button>
-    } @else {
-    <span class="detail__hint">Đang chờ người kiểm soát (CHECKER) phê duyệt.</span>
-    }
+    <ng-container *appHasRole="[APP_ROLES.CHECKER, APP_ROLES.ADMIN]">
+      <button tuiButton type="button" appearance="secondary" size="m" (click)="reject.emit(record)">
+        Từ chối
+      </button>
+      <button tuiButton type="button" size="m" (click)="approve.emit(record.id)">
+        Phê duyệt
+      </button>
+    </ng-container>
     }
     @case (GROUP_CATEGORY_STATUS.REJECTED) {
-    @if (auth.hasRole(APP_ROLES.MAKER)) {
     @if (canDelete) {
-    <button tuiButton type="button" appearance="secondary" size="m" (click)="deleteRecord.emit(record)">
+    <button *appHasRole="APP_ROLES.ADMIN" tuiButton type="button" appearance="secondary" size="m"
+      (click)="deleteRecord.emit(record)">
       Xóa
     </button>
     }
-    <button tuiButton type="button" size="m" (click)="submitForApproval.emit(record.id)">
+    <button *appHasRole="[APP_ROLES.MAKER, APP_ROLES.ADMIN]" tuiButton type="button" size="m"
+      (click)="submitForApproval.emit(record.id)">
       Gửi duyệt
     </button>
-    }
     }
     @case (GROUP_CATEGORY_STATUS.CANCELLED) {
-    @if (auth.hasRole(APP_ROLES.MAKER)) {
-    <button tuiButton type="button" size="m" (click)="submitForApproval.emit(record.id)">
+    <button *appHasRole="[APP_ROLES.MAKER, APP_ROLES.ADMIN]" tuiButton type="button" size="m"
+      (click)="submitForApproval.emit(record.id)">
       Gửi duyệt
     </button>
     }
-    }
     @default {
-    @if (auth.hasRole(APP_ROLES.MAKER)) {
-    <button tuiButton type="button" appearance="secondary" size="m" (click)="cancel.emit(record.id)">
+    <button *appHasRole="[APP_ROLES.CHECKER, APP_ROLES.ADMIN]" tuiButton type="button" appearance="secondary" size="m"
+      (click)="cancel.emit(record.id)">
       Hủy phê duyệt
     </button>
-    }
     }
     }
   </div>

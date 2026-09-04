@@ -10,6 +10,7 @@ import {
   groupCategoryStatusLabel,
 } from '../../models/group-category.model';
 import { AuthService } from '../../services/auth/auth.service';
+import { HasRoleDirective } from '../../directive/has-role.directive';
 
 type DetailKey =
   | 'paramName'
@@ -38,7 +39,7 @@ const DETAIL_FIELDS: DetailField[] = [
 @Component({
   selector: 'app-ph-record-detail-dialog',
   standalone: true,
-  imports: [TuiBadge, TuiButton, TuiIcon],
+  imports: [TuiBadge, TuiButton, TuiIcon, HasRoleDirective],
   templateUrl: './record-detail-dialog.component.html',
   styleUrl: './record-detail-dialog.component.scss',
 })

@@ -29,7 +29,7 @@ export const routes: Routes = [
       },
       {
         path: 'new',
-        canActivate: [roleGuard([APP_ROLES.MAKER])],
+        canActivate: [roleGuard([APP_ROLES.MAKER, APP_ROLES.ADMIN])],
         loadComponent: () =>
           import('./components/record-form-page/record-form-page.component').then(
             (m) => m.RecordFormPageComponent,
@@ -37,7 +37,7 @@ export const routes: Routes = [
       },
       {
         path: 'edit/:id',
-        canActivate: [roleGuard([APP_ROLES.MAKER])],
+        canActivate: [roleGuard([APP_ROLES.MAKER, APP_ROLES.ADMIN])],
         loadComponent: () =>
           import('./components/record-form-page/record-form-page.component').then(
             (m) => m.RecordFormPageComponent,

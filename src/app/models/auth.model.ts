@@ -33,6 +33,8 @@ export interface JwtPayload {
 export const APP_ROLES = {
     MAKER: 'ROLE_MAKER',
     CHECKER: 'ROLE_CHECKER',
+    ADMIN: 'ROLE_ADMIN',
+    VIEWER: 'ROLE_VIEWER',
 } as const;
 
 export type AppRole = (typeof APP_ROLES)[keyof typeof APP_ROLES];
@@ -41,4 +43,6 @@ export type AppRole = (typeof APP_ROLES)[keyof typeof APP_ROLES];
 export const ROLE_LABELS: Record<string, string> = {
     [APP_ROLES.MAKER]: 'Người lập đề xuất',
     [APP_ROLES.CHECKER]: 'Người kiểm soát',
+    [APP_ROLES.ADMIN]: 'Quản trị viên',
+    [APP_ROLES.VIEWER]: 'Người xem',
 };
